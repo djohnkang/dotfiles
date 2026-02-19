@@ -38,9 +38,28 @@ sudo launchctl bootstrap system /Library/LaunchAgents/userkeymapping.plist
 # 5. 즉시 적용
 /Users/Shared/bin/userkeymapping
 
+# 6. 입력 소스 전환 단축키를 F18로 설정
+# AppleSymbolicHotKeys ID 61 = "Select next source in Input menu"
+# parameters: (65535=non-printable, 79=F18 virtual keycode, 0=no modifiers)
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61 '
+  <dict>
+    <key>enabled</key>
+    <true/>
+    <key>value</key>
+    <dict>
+      <key>parameters</key>
+      <array>
+        <integer>65535</integer>
+        <integer>79</integer>
+        <integer>0</integer>
+      </array>
+      <key>type</key>
+      <string>standard</string>
+    </dict>
+  </dict>
+'
+
 echo ""
-echo "Right Command → F18 매핑 완료!"
-echo ""
-echo "남은 수동 설정:"
-echo "  시스템 설정 > 키보드 > 키보드 단축키 > 입력 소스"
-echo "  → '입력 소스 전환' 단축키를 F18로 지정하세요."
+echo "Right Command → 한/영 전환 설정 완료!"
+echo "  - Right Command → F18 키 매핑 적용됨"
+echo "  - 입력 소스 전환 단축키 → F18 설정됨"

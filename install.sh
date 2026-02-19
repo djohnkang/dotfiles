@@ -25,14 +25,23 @@ echo ""
 # =========================================================
 # 1. Homebrew 설치
 # =========================================================
+# Homebrew PATH 설정 (Apple Silicon / Intel 대응)
+if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -f /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 if command -v brew &>/dev/null; then
     info "Homebrew가 이미 설치되어 있습니다."
 else
     if confirm "Homebrew를 설치하시겠습니까?"; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        # Apple Silicon Mac에서 PATH 추가
+        # 설치 직후 PATH 로드
         if [[ -f /opt/homebrew/bin/brew ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)"
+        elif [[ -f /usr/local/bin/brew ]]; then
+            eval "$(/usr/local/bin/brew shellenv)"
         fi
         info "Homebrew 설치 완료."
     else

@@ -5,7 +5,7 @@ macOS 개발 환경 설정을 자동화하는 dotfiles 저장소.
 ## 빠른 시작
 
 ```bash
-git clone https://github.com/<user>/dotfiles.git ~/dotfiles
+git clone https://github.com/djohnkang/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 ```
@@ -37,8 +37,6 @@ cd ~/dotfiles
 
 `*.local` 파일은 `.gitignore`에 포함되어 추적되지 않음.
 
-## 수동 설정
+## 수동 설정 없음
 
-설치 스크립트 실행 후 수동으로 완료해야 하는 항목:
-
-1. **한/영 전환**: 시스템 설정 > 키보드 > 키보드 단축키 > 입력 소스 → F18 지정
+`install.sh`가 모든 설정을 자동으로 처리합니다.
