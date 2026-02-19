@@ -1,13 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Right Command → 한/영 전환 (F18) 설정을 시작합니다..."
+echo "키보드 리매핑 설정을 시작합니다..."
 
 # 1. hidutil 리매핑 스크립트 생성
+#    - Right Command (0xe7) → F18 (0x6d): 한/영 전환용
+#    - Caps Lock (0x39) → Left Control (0xe0)
 sudo mkdir -p /Users/Shared/bin
 sudo tee /Users/Shared/bin/userkeymapping > /dev/null << 'SCRIPT'
 #!/bin/bash
-hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000e7,"HIDKeyboardModifierMappingDst":0x70000006d}]}'
+hidutil property --set '{"UserKeyMapping":[
+  {"HIDKeyboardModifierMappingSrc":0x7000000e7,"HIDKeyboardModifierMappingDst":0x70000006d},
+  {"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000e0}
+]}'
 SCRIPT
 sudo chmod 755 /Users/Shared/bin/userkeymapping
 
@@ -59,9 +64,10 @@ ACTIVATE="/System/Library/PrivateFrameworks/SystemAdministration.framework/Resou
 if [[ -x "$ACTIVATE" ]]; then
     "$ACTIVATE" -u
     echo ""
-    echo "Right Command → 한/영 전환 설정 완료!"
-    echo "  - Right Command → F18 키 매핑 적용됨"
-    echo "  - 입력 소스 전환 단축키 → F18 설정됨 (즉시 반영)"
+    echo "키보드 리매핑 설정 완료!"
+    echo "  - Right Command → F18 (한/영 전환)"
+    echo "  - Caps Lock → Control"
+    echo "  - 입력 소스 전환 단축키 → F18 (즉시 반영)"
 else
     echo ""
     echo "Right Command → F18 키 매핑 완료!"

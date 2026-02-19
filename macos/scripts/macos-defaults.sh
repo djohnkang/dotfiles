@@ -6,8 +6,9 @@ echo "macOS 시스템 설정을 적용합니다..."
 # ============================================================
 # 키보드
 # ============================================================
-defaults write NSGlobalDomain KeyRepeat -int 2
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+# 키 반복 속도: 가장 빠르게 (1), 반복 지연 시간: 가장 짧게 (10)
+defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # 자동 완성/교정 비활성화
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
@@ -64,6 +65,9 @@ killall Dock
 # ============================================================
 # Finder
 # ============================================================
+# 새 Finder 창에서 Downloads 폴더 열기
+defaults write com.apple.finder NewWindowTarget -string "PfLo"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Downloads/"
 defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder ShowStatusBar -bool true
 killall Finder
