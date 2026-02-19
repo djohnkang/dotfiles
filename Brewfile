@@ -1,5 +1,4 @@
 # 개발 도구
-brew "git"
 brew "gh"
 brew "stow"
 brew "mas"
