@@ -1,0 +1,2 @@
+# OpenClaw 전용 머신 추가 패키지 (Host macOS)
+cask "utm"
