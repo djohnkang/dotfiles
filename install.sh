@@ -50,7 +50,27 @@ else
 fi
 
 # =========================================================
-# 2. Homebrew 패키지 설치
+# 2. macOS 시스템 설정
+# =========================================================
+if confirm "macOS 시스템 설정을 적용하시겠습니까? (Dock, 키보드, Finder 등)"; then
+    bash "$DOTFILES_DIR/macos/scripts/macos-defaults.sh"
+    info "macOS 시스템 설정 적용 완료."
+else
+    warn "macOS 시스템 설정을 건너뜁니다."
+fi
+
+# =========================================================
+# 3. 키보드 설정 (Right Command → 한/영 전환)
+# =========================================================
+if confirm "Right Command → 한/영 전환 키 설정을 적용하시겠습니까? (sudo 필요)"; then
+    bash "$DOTFILES_DIR/keyboard/scripts/setup-keyboard.sh"
+    info "키보드 설정 완료."
+else
+    warn "키보드 설정을 건너뜁니다."
+fi
+
+# =========================================================
+# 4. Homebrew 패키지 설치
 # =========================================================
 if command -v brew &>/dev/null; then
     if confirm "Brewfile로 공통 패키지를 설치하시겠습니까?"; then
@@ -64,7 +84,7 @@ else
 fi
 
 # =========================================================
-# 3. Stow로 심볼릭 링크 생성
+# 5. Stow로 심볼릭 링크 생성
 # =========================================================
 if command -v stow &>/dev/null; then
     if confirm "stow로 zsh, git 설정을 심볼릭 링크하시겠습니까?"; then
@@ -77,26 +97,6 @@ if command -v stow &>/dev/null; then
     fi
 else
     warn "stow가 설치되어 있지 않습니다. 'brew install stow' 후 다시 실행하세요."
-fi
-
-# =========================================================
-# 4. macOS 시스템 설정
-# =========================================================
-if confirm "macOS 시스템 설정을 적용하시겠습니까? (Dock, 키보드, Finder 등)"; then
-    bash "$DOTFILES_DIR/macos/scripts/macos-defaults.sh"
-    info "macOS 시스템 설정 적용 완료."
-else
-    warn "macOS 시스템 설정을 건너뜁니다."
-fi
-
-# =========================================================
-# 5. 키보드 설정 (Right Command → 한/영 전환)
-# =========================================================
-if confirm "Right Command → 한/영 전환 키 설정을 적용하시겠습니까? (sudo 필요)"; then
-    bash "$DOTFILES_DIR/keyboard/scripts/setup-keyboard.sh"
-    info "키보드 설정 완료."
-else
-    warn "키보드 설정을 건너뜁니다."
 fi
 
 # =========================================================
