@@ -22,43 +22,20 @@ defaults write com.apple.dock tilesize -int 48
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 
-# Dock 기본 앱 정리 (앱 경로로 매칭 — 언어 설정 무관)
-# Safari, Messages, Calendar만 남기고 나머지 제거
-REMOVE_PATHS=(
-    "/System/Applications/Mail.app"
-    "/System/Applications/Maps.app"
-    "/System/Applications/Photos.app"
-    "/System/Applications/FaceTime.app"
-    "/System/Applications/Contacts.app"
-    "/System/Applications/Reminders.app"
-    "/System/Applications/Notes.app"
-    "/System/Applications/TV.app"
-    "/System/Applications/Music.app"
-    "/System/Applications/Podcasts.app"
-    "/System/Applications/News.app"
-    "/System/Applications/Freeform.app"
-    "/Applications/Keynote.app"
-    "/Applications/Numbers.app"
-    "/Applications/Pages.app"
-    "/System/Applications/App Store.app"
-    "/System/Applications/System Preferences.app"
-)
+# Dock 앱 초기화: 전부 비우고 유지할 앱만 다시 추가
+add_dock_app() {
+    defaults write com.apple.dock persistent-apps -array-add \
+        "<dict><key>tile-data</key><dict><key>file-data</key><dict>\
+<key>_CFURLString</key><string>$1</string>\
+<key>_CFURLStringType</key><integer>0</integer>\
+</dict></dict></dict>"
+}
 
-PLIST="$HOME/Library/Preferences/com.apple.dock.plist"
-for app_path in "${REMOVE_PATHS[@]}"; do
-    idx=0
-    while true; do
-        entry=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-data:_CFURLString" "$PLIST" 2>/dev/null) || break
-        # 경로 비교 (file:// prefix, trailing slash 등 대응)
-        if [[ "$entry" == *"${app_path}"* ]]; then
-            label=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-label" "$PLIST" 2>/dev/null) || label="$app_path"
-            /usr/libexec/PlistBuddy -c "Delete :persistent-apps:${idx}" "$PLIST"
-            echo "  Dock에서 제거: $label"
-        else
-            ((idx++))
-        fi
-    done
-done
+defaults write com.apple.dock persistent-apps -array
+add_dock_app "/System/Applications/Safari.app"
+add_dock_app "/System/Applications/Messages.app"
+add_dock_app "/System/Applications/Calendar.app"
+echo "  Dock 정리 완료: Safari, Messages, Calendar만 유지"
 
 killall Dock
 
