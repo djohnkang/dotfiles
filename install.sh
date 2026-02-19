@@ -88,6 +88,15 @@ if command -v brew &>/dev/null; then
         warn "패키지 설치를 건너뜁니다."
     fi
 
+        # Stow로 심볼릭 링크 생성
+        cd "$DOTFILES_DIR"
+        stow -v --target="$HOME" zsh
+        stow -v --target="$HOME" git
+        info "심볼릭 링크 생성 완료 (~/.zshrc, ~/.gitconfig)"
+    else
+        warn "패키지 설치를 건너뜁니다."
+    fi
+
     # Mac App Store 앱 (Apple ID 로그인 필요)
     if confirm "Mac App Store 앱을 설치하시겠습니까? (Apple ID 로그인 필요)"; then
         if mas account &>/dev/null; then
@@ -104,31 +113,10 @@ else
 fi
 
 # =========================================================
-# 5. Stow로 심볼릭 링크 생성
-# =========================================================
-if command -v stow &>/dev/null; then
-    if confirm "stow로 zsh, git 설정을 심볼릭 링크하시겠습니까?"; then
-        cd "$DOTFILES_DIR"
-        stow -v --target="$HOME" zsh
-        stow -v --target="$HOME" git
-        info "심볼릭 링크 생성 완료."
-    else
-        warn "심볼릭 링크 생성을 건너뜁니다."
-    fi
-else
-    warn "stow가 설치되어 있지 않습니다. 'brew install stow' 후 다시 실행하세요."
-fi
-
-# =========================================================
 # 완료
 # =========================================================
 echo ""
 echo "========================================="
 echo "  설치 완료!"
 echo "========================================="
-echo ""
-echo "확인 사항:"
-echo "  1. 새 터미널을 열어 zsh 설정이 적용되었는지 확인하세요."
-echo "  2. 'ls -la ~/.zshrc ~/.gitconfig'로 심볼릭 링크를 확인하세요."
-echo "  3. 머신별 설정은 ~/.zshrc.local, ~/.gitconfig.local에 추가하세요."
 echo ""
