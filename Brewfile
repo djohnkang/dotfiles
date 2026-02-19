@@ -18,7 +18,6 @@ brew "ruby-build"
 brew "go"
 
 # 유틸리티
-brew "curl"
 brew "awscli"
 
 # Cask (GUI 앱) — 브라우저
