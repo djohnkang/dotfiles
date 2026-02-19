@@ -39,6 +39,4 @@ cd ~/dotfiles
 
 ## 수동 설정
 
-`install.sh` 실행 후 아래 항목만 수동으로 설정:
-
-- **Finder 사이드바 즐겨찾기 순서**: Downloads → Desktop 순으로 드래그하여 정렬
+`install.sh` 실행 후 수동 설정 항목은 [docs/manual-setup.md](docs/manual-setup.md) 참고.
