@@ -59,6 +59,22 @@ defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 61
     </dict>
   </dict>"
 
+# 7. Spotlight 단축키(Cmd+Space) 비활성화 — Raycast가 대체
+# AppleSymbolicHotKeys ID 64 = "Show Spotlight search"
+# parameters: (32=space ASCII, 49=space keycode, 1048576=Cmd modifier)
+defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 64 \
+  "<dict>
+    <key>enabled</key><false/>
+    <key>value</key><dict>
+      <key>type</key><string>standard</string>
+      <key>parameters</key><array>
+        <integer>32</integer>
+        <integer>49</integer>
+        <integer>1048576</integer>
+      </array>
+    </dict>
+  </dict>"
+
 # 7. 변경 즉시 반영 (재로그인 없이)
 ACTIVATE="/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings"
 if [[ -x "$ACTIVATE" ]]; then
@@ -67,7 +83,8 @@ if [[ -x "$ACTIVATE" ]]; then
     echo "키보드 리매핑 설정 완료!"
     echo "  - Right Command → F18 (한/영 전환)"
     echo "  - Caps Lock → Control"
-    echo "  - 입력 소스 전환 단축키 → F18 (즉시 반영)"
+    echo "  - 입력 소스 전환 단축키 → F18"
+    echo "  - Spotlight Cmd+Space 비활성화 (Raycast 사용)"
 else
     echo ""
     echo "Right Command → F18 키 매핑 완료!"
