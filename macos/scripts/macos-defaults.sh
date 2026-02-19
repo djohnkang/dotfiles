@@ -21,45 +21,38 @@ defaults write com.apple.dock tilesize -int 48
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 
-# Dock 기본 앱 정리 (외부 도구 없이 defaults 사용)
-# 기본 Dock에서 Safari, Messages, Calendar만 남기고 나머지 제거
-dock_app_path() {
-    local label="$1"
-    defaults read com.apple.dock persistent-apps | \
-        /usr/libexec/PlistBuddy -c "Print" /dev/stdin 2>/dev/null | grep -c "$label" || true
-}
-
-# 제거할 기본 앱 목록
-REMOVE_APPS=(
-    "Mail"
-    "Maps"
-    "Photos"
-    "FaceTime"
-    "Contacts"
-    "Reminders"
-    "Notes"
-    "TV"
-    "Music"
-    "Podcasts"
-    "News"
-    "Keynote"
-    "Numbers"
-    "Pages"
-    "App Store"
-    "System Preferences"
-    "Freeform"
+# Dock 기본 앱 정리 (앱 경로로 매칭 — 언어 설정 무관)
+# Safari, Messages, Calendar만 남기고 나머지 제거
+REMOVE_PATHS=(
+    "/System/Applications/Mail.app"
+    "/System/Applications/Maps.app"
+    "/System/Applications/Photos.app"
+    "/System/Applications/FaceTime.app"
+    "/System/Applications/Contacts.app"
+    "/System/Applications/Reminders.app"
+    "/System/Applications/Notes.app"
+    "/System/Applications/TV.app"
+    "/System/Applications/Music.app"
+    "/System/Applications/Podcasts.app"
+    "/System/Applications/News.app"
+    "/System/Applications/Freeform.app"
+    "/Applications/Keynote.app"
+    "/Applications/Numbers.app"
+    "/Applications/Pages.app"
+    "/System/Applications/App Store.app"
+    "/System/Applications/System Preferences.app"
 )
 
 PLIST="$HOME/Library/Preferences/com.apple.dock.plist"
-for app in "${REMOVE_APPS[@]}"; do
-    # persistent-apps 배열에서 해당 앱 찾아서 제거
+for app_path in "${REMOVE_PATHS[@]}"; do
     idx=0
     while true; do
-        entry=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-label" "$PLIST" 2>/dev/null) || break
-        if [[ "$entry" == "$app" ]]; then
+        entry=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-data:_CFURLString" "$PLIST" 2>/dev/null) || break
+        # 경로 비교 (file:// prefix, trailing slash 등 대응)
+        if [[ "$entry" == *"${app_path}"* ]]; then
+            label=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-label" "$PLIST" 2>/dev/null) || label="$app_path"
             /usr/libexec/PlistBuddy -c "Delete :persistent-apps:${idx}" "$PLIST"
-            echo "  Dock에서 제거: $app"
-            # 인덱스가 밀리므로 idx 증가하지 않음
+            echo "  Dock에서 제거: $label"
         else
             ((idx++))
         fi
