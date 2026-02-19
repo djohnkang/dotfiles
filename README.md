@@ -37,6 +37,8 @@ cd ~/dotfiles
 
 `*.local` 파일은 `.gitignore`에 포함되어 추적되지 않음.
 
-## 수동 설정 없음
+## 수동 설정
 
-`install.sh`가 모든 설정을 자동으로 처리합니다.
+`install.sh` 실행 후 아래 항목만 수동으로 설정:
+
+- **Finder 사이드바 즐겨찾기 순서**: Downloads → Desktop 순으로 드래그하여 정렬
