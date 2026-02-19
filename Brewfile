@@ -24,6 +24,7 @@ brew "awscli"
 # Cask (GUI 앱) — 브라우저
 cask "brave-browser"
 cask "arc"
+cask "google-chrome"
 
 # Cask — 개발 도구
 cask "iterm2"
