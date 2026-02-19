@@ -45,6 +45,7 @@ cask "discord"
 
 # Cask — AI
 cask "claude"
+cask "claude-code"
 
 # Cask — 유틸리티
 cask "vlc"
