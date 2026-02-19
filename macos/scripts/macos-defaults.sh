@@ -32,10 +32,9 @@ add_dock_app() {
 }
 
 defaults write com.apple.dock persistent-apps -array
-add_dock_app "/System/Applications/Safari.app"
 add_dock_app "/System/Applications/Messages.app"
 add_dock_app "/System/Applications/Calendar.app"
-echo "  Dock 정리 완료: Safari, Messages, Calendar만 유지"
+echo "  Dock 정리 완료: Messages, Calendar만 유지"
 
 killall Dock
 
