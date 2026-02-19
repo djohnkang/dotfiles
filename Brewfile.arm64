@@ -1,0 +1,4 @@
+# Apple Silicon (arm64) 전용 Cask
+cask "thebrowsercompany-dia"
+cask "chatgpt"
+cask "chatgpt-atlas"

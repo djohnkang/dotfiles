@@ -21,18 +21,50 @@ defaults write com.apple.dock tilesize -int 48
 defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock minimize-to-application -bool true
 
-# Dock 앱 배치 (dockutil 필요)
-if command -v dockutil &>/dev/null; then
-    dockutil --remove all --no-restart
-    dockutil --add /Applications/Brave\ Browser.app --no-restart
-    dockutil --add /Applications/iTerm.app --no-restart
-    dockutil --add /Applications/Cursor.app --no-restart
-    dockutil --add /Applications/Slack.app --no-restart
-    dockutil --add /Applications/Spark.app --no-restart
-    dockutil --add /System/Applications/System\ Settings.app --no-restart
-else
-    echo "경고: dockutil이 설치되어 있지 않습니다. Dock 앱 배치를 건너뜁니다."
-fi
+# Dock 기본 앱 정리 (외부 도구 없이 defaults 사용)
+# 기본 Dock에서 Safari, Messages, Calendar만 남기고 나머지 제거
+dock_app_path() {
+    local label="$1"
+    defaults read com.apple.dock persistent-apps | \
+        /usr/libexec/PlistBuddy -c "Print" /dev/stdin 2>/dev/null | grep -c "$label" || true
+}
+
+# 제거할 기본 앱 목록
+REMOVE_APPS=(
+    "Mail"
+    "Maps"
+    "Photos"
+    "FaceTime"
+    "Contacts"
+    "Reminders"
+    "Notes"
+    "TV"
+    "Music"
+    "Podcasts"
+    "News"
+    "Keynote"
+    "Numbers"
+    "Pages"
+    "App Store"
+    "System Preferences"
+    "Freeform"
+)
+
+PLIST="$HOME/Library/Preferences/com.apple.dock.plist"
+for app in "${REMOVE_APPS[@]}"; do
+    # persistent-apps 배열에서 해당 앱 찾아서 제거
+    idx=0
+    while true; do
+        entry=$(/usr/libexec/PlistBuddy -c "Print :persistent-apps:${idx}:tile-data:file-label" "$PLIST" 2>/dev/null) || break
+        if [[ "$entry" == "$app" ]]; then
+            /usr/libexec/PlistBuddy -c "Delete :persistent-apps:${idx}" "$PLIST"
+            echo "  Dock에서 제거: $app"
+            # 인덱스가 밀리므로 idx 증가하지 않음
+        else
+            ((idx++))
+        fi
+    done
+done
 
 killall Dock
 

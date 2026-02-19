@@ -41,25 +41,33 @@ sudo launchctl bootstrap system /Library/LaunchAgents/userkeymapping.plist
 # 6. 입력 소스 전환 단축키를 F18로 설정
 # AppleSymbolicHotKeys ID 61 = "Select next source in Input menu"
 # parameters: (65535=non-printable, 79=F18 virtual keycode, 0=no modifiers)
-defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61 '
-  <dict>
-    <key>enabled</key>
-    <true/>
-    <key>value</key>
-    <dict>
-      <key>parameters</key>
-      <array>
+defaults write com.apple.symbolichotkeys.plist AppleSymbolicHotKeys -dict-add 61 \
+  "<dict>
+    <key>enabled</key><true/>
+    <key>value</key><dict>
+      <key>type</key><string>standard</string>
+      <key>parameters</key><array>
         <integer>65535</integer>
         <integer>79</integer>
         <integer>0</integer>
       </array>
-      <key>type</key>
-      <string>standard</string>
     </dict>
-  </dict>
-'
+  </dict>"
 
-echo ""
-echo "Right Command → 한/영 전환 설정 완료!"
-echo "  - Right Command → F18 키 매핑 적용됨"
-echo "  - 입력 소스 전환 단축키 → F18 설정됨"
+# 7. 변경 즉시 반영 (재로그인 없이)
+ACTIVATE="/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings"
+if [[ -x "$ACTIVATE" ]]; then
+    "$ACTIVATE" -u
+    echo ""
+    echo "Right Command → 한/영 전환 설정 완료!"
+    echo "  - Right Command → F18 키 매핑 적용됨"
+    echo "  - 입력 소스 전환 단축키 → F18 설정됨 (즉시 반영)"
+else
+    echo ""
+    echo "Right Command → F18 키 매핑 완료!"
+    echo ""
+    echo "입력 소스 전환 단축키는 수동 설정이 필요합니다."
+    echo "설정 화면을 열겠습니다..."
+    open "x-apple.systempreferences:com.apple.Keyboard"
+    echo "  → '키보드 단축키...' > '입력 소스' > F18 지정"
+fi

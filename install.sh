@@ -75,9 +75,29 @@ fi
 if command -v brew &>/dev/null; then
     if confirm "Brewfile로 공통 패키지를 설치하시겠습니까?"; then
         brew bundle --file="$DOTFILES_DIR/Brewfile"
-        info "Homebrew 패키지 설치 완료."
+        info "공통 패키지 설치 완료."
+
+        # arm64 전용 cask (Apple Silicon만)
+        if [[ "$(uname -m)" == "arm64" ]]; then
+            brew bundle --file="$DOTFILES_DIR/Brewfile.arm64"
+            info "Apple Silicon 전용 앱 설치 완료."
+        else
+            warn "Intel Mac: arm64 전용 앱(Dia, ChatGPT 등)은 건너뜁니다."
+        fi
     else
         warn "패키지 설치를 건너뜁니다."
+    fi
+
+    # Mac App Store 앱 (Apple ID 로그인 필요)
+    if confirm "Mac App Store 앱을 설치하시겠습니까? (Apple ID 로그인 필요)"; then
+        if mas account &>/dev/null; then
+            brew bundle --file="$DOTFILES_DIR/Brewfile.mas"
+            info "App Store 앱 설치 완료."
+        else
+            warn "Apple ID에 로그인되어 있지 않습니다. App Store에서 로그인 후 다시 실행하세요."
+        fi
+    else
+        warn "App Store 앱 설치를 건너뜁니다."
     fi
 else
     warn "Homebrew가 없어 패키지 설치를 건너뜁니다."
