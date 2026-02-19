@@ -48,5 +48,7 @@ cask "claude"
 
 # Cask — 유틸리티
 cask "vlc"
+cask "1password"
 cask "1password-cli"
+cask "utm"
 
