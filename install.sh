@@ -6,14 +6,14 @@ DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 # 색상 출력
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 info() { echo -e "${GREEN}[✓]${NC} $1"; }
 warn() { echo -e "${YELLOW}[!]${NC} $1"; }
 
 confirm() {
-    read -rp "$1 (y/n) " answer
-    [[ "$answer" =~ ^[Yy]$ ]]
+    read -rp "$1 (Y/n) " answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]]
 }
 
 echo ""
@@ -23,93 +23,62 @@ echo "========================================="
 echo ""
 
 # =========================================================
-# 1. Homebrew 설치
+# 1. Homebrew PATH 확인
 # =========================================================
-# Homebrew PATH 설정 (Apple Silicon / Intel 대응)
 if [[ -f /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ -f /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-if command -v brew &>/dev/null; then
-    info "Homebrew가 이미 설치되어 있습니다."
+if ! command -v brew &>/dev/null; then
+    echo "Homebrew가 설치되어 있지 않습니다."
+    echo "먼저 k-mac을 실행하세요: curl -fsSL djohnkang.github.io/setup.sh | bash"
+    exit 1
+fi
+
+# =========================================================
+# 2. Brewfile 패키지 설치
+# =========================================================
+if brew bundle check --file="$DOTFILES_DIR/Brewfile" &>/dev/null; then
+    info "Brewfile 패키지 이미 설치됨"
 else
-    if confirm "Homebrew를 설치하시겠습니까?"; then
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        # 설치 직후 PATH 로드
-        if [[ -f /opt/homebrew/bin/brew ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        elif [[ -f /usr/local/bin/brew ]]; then
-            eval "$(/usr/local/bin/brew shellenv)"
-        fi
-        info "Homebrew 설치 완료."
+    echo "Brewfile 패키지 설치 중..."
+    brew bundle --file="$DOTFILES_DIR/Brewfile"
+    info "패키지 설치 완료"
+fi
+
+# arm64 전용 cask (Apple Silicon만)
+if [[ "$(uname -m)" == "arm64" ]]; then
+    if brew bundle check --file="$DOTFILES_DIR/Brewfile.arm64" &>/dev/null; then
+        info "arm64 패키지 이미 설치됨"
     else
-        warn "Homebrew 설치를 건너뜁니다."
+        brew bundle --file="$DOTFILES_DIR/Brewfile.arm64"
+        info "Apple Silicon 전용 앱 설치 완료"
     fi
 fi
 
 # =========================================================
-# 2. macOS 시스템 설정
+# 3. Stow 심볼릭 링크
 # =========================================================
-if confirm "macOS 시스템 설정을 적용하시겠습니까? (Dock, 키보드, Finder 등)"; then
-    bash "$DOTFILES_DIR/macos/scripts/macos-defaults.sh"
-    info "macOS 시스템 설정 적용 완료."
-else
-    warn "macOS 시스템 설정을 건너뜁니다."
-fi
+cd "$DOTFILES_DIR"
+stow -v --target="$HOME" zsh
+stow -v --target="$HOME" git
+stow -v --target="$HOME" starship
+info "심볼릭 링크 생성 완료 (~/.zshrc, ~/.gitconfig, starship.toml)"
 
 # =========================================================
-# 3. 키보드 설정 (Right Command → 한/영 전환)
+# 4. Mac App Store 앱 (선택)
 # =========================================================
-if confirm "Right Command → 한/영 전환 키 설정을 적용하시겠습니까? (sudo 필요)"; then
-    bash "$DOTFILES_DIR/keyboard/scripts/setup-keyboard.sh"
-    info "키보드 설정 완료."
-else
-    warn "키보드 설정을 건너뜁니다."
-fi
-
-# =========================================================
-# 4. Homebrew 패키지 설치
-# =========================================================
-if command -v brew &>/dev/null; then
-    if confirm "Brewfile로 공통 패키지를 설치하시겠습니까?"; then
-        brew bundle --file="$DOTFILES_DIR/Brewfile"
-        info "공통 패키지 설치 완료."
-
-        # arm64 전용 cask (Apple Silicon만)
-        if [[ "$(uname -m)" == "arm64" ]]; then
-            brew bundle --file="$DOTFILES_DIR/Brewfile.arm64"
-            info "Apple Silicon 전용 앱 설치 완료."
-        else
-            warn "Intel Mac: arm64 전용 앱(Dia, ChatGPT 등)은 건너뜁니다."
-        fi
+if confirm "Mac App Store 앱을 설치하시겠습니까? (Apple ID 로그인 필요)"; then
+    if command -v mas &>/dev/null && mas account &>/dev/null 2>&1; then
+        brew bundle --file="$DOTFILES_DIR/Brewfile.mas"
+        info "App Store 앱 설치 완료"
     else
-        warn "패키지 설치를 건너뜁니다."
-    fi
-
-        # Stow로 심볼릭 링크 생성
-        cd "$DOTFILES_DIR"
-        stow -v --target="$HOME" zsh
-        stow -v --target="$HOME" git
-        info "심볼릭 링크 생성 완료 (~/.zshrc, ~/.gitconfig)"
-    else
-        warn "패키지 설치를 건너뜁니다."
-    fi
-
-    # Mac App Store 앱 (Apple ID 로그인 필요)
-    if confirm "Mac App Store 앱을 설치하시겠습니까? (Apple ID 로그인 필요)"; then
-        if mas account &>/dev/null; then
-            brew bundle --file="$DOTFILES_DIR/Brewfile.mas"
-            info "App Store 앱 설치 완료."
-        else
-            warn "Apple ID에 로그인되어 있지 않습니다. App Store에서 로그인 후 다시 실행하세요."
-        fi
-    else
-        warn "App Store 앱 설치를 건너뜁니다."
+        warn "mas가 없거나 Apple ID에 로그인되어 있지 않습니다."
     fi
 else
-    warn "Homebrew가 없어 패키지 설치를 건너뜁니다."
+    warn "App Store 앱 설치를 건너뜁니다."
 fi
 
 # =========================================================
@@ -119,4 +88,6 @@ echo ""
 echo "========================================="
 echo "  설치 완료!"
 echo "========================================="
+echo ""
+echo "새 셸을 열거나 source ~/.zshrc 를 실행하세요."
 echo ""

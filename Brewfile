@@ -1,53 +1,40 @@
-# 개발 도구
+# CLI 도구
 brew "gh"
 brew "stow"
-brew "mas"
 brew "direnv"
 brew "ripgrep"
 brew "jq"
 brew "tree"
-brew "dockutil"
+brew "fd"
+brew "bat"
+brew "fzf"
+brew "htop"
+brew "mas"
+
+# 프롬프트
+brew "starship"
 
 # 언어/런타임 매니저
 brew "pyenv"
 brew "pyenv-virtualenv"
 brew "nvm"
-brew "rbenv"
-brew "ruby-build"
-brew "go"
 
 # 유틸리티
 brew "awscli"
 
-# Cask (GUI 앱) — 브라우저
-cask "brave-browser"
-cask "arc"
-cask "google-chrome"
+# Cask — 생산성
+cask "obsidian"
 
 # Cask — 개발 도구
-cask "iterm2"
-cask "visual-studio-code"
-
-# Cask — 생산성
-cask "raycast"
-cask "obsidian"
-cask "notion"
-cask "notion-calendar"
-cask "notion-mail"
-cask "google-drive"
-cask "handy"
+cask "cmux"
+cask "cursor"
 
 # Cask — 커뮤니케이션
 cask "telegram"
 cask "discord"
-
-# Cask — AI
-cask "claude"
-cask "claude-code"
+cask "slack"
 
 # Cask — 유틸리티
-cask "vlc"
 cask "1password"
 cask "1password-cli"
 cask "utm"
-

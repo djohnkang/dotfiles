@@ -1,0 +1,39 @@
+# Minimal Starship config
+# https://starship.rs/config/
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$cmd_duration\
+$line_break\
+$character"""
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = "[$branch]($style) "
+style = "bold purple"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+
+[python]
+format = '[${version}]($style) '
+detect_files = ["pyproject.toml", "requirements.txt", ".python-version"]
+
+[nodejs]
+format = '[${version}]($style) '
+detect_files = ["package.json", ".node-version"]
+
+[cmd_duration]
+min_time = 3_000
+format = "[$duration]($style) "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"

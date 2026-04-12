@@ -2,10 +2,24 @@
 	name = John Kang
 	email = djohnnykang@gmail.com
 
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[diff]
+	colorMoved = default
+
+[rerere]
+	enabled = true
+
 [http]
 	postBuffer = 524288000
 
 # 머신별 로컬 설정 (gitignore 대상)
-# includeIf, 회사별 설정 등은 ~/.gitconfig.local에서 관리
 [include]
 	path = ~/.gitconfig.local
